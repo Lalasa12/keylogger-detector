@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keylogger Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .output {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Keylogger Detector</h1>
+        <p>Start typing below to check for unusual keylogging activity!</p>
+
+        <textarea id="inputField" rows="6" placeholder="Type something..."></textarea>
+
+        <div class="output" id="output"></div>
+        <div id="alert" class="alert"></div>
+    </div>
+
+    <script>
+        let keyPressCount = 0;  // Counter for keypresses
+        const maxKeyPresses = 30;  // Max keypresses allowed within a short time
+        const timeWindow = 5000;  // Time window in milliseconds (5 seconds)
+        let lastKeyPressTime = Date.now();  // Track the last keypress time
+
+        const inputField = document.getElementById("inputField");
+        const output = document.getElementById("output");
+        const alertBox = document.getElementById("alert");
+
+        // Function to detect unusual keypress behavior
+        function detectKeylogger(event) {
+            const currentTime = Date.now();
+            const timeDifference = currentTime - lastKeyPressTime;
+
+            // If the time difference between keypresses is too short, it might be a keylogger
+            if (timeDifference < 50) {
+                keyPressCount++;
+            } else {
+                keyPressCount = 0;
+            }
+
+            lastKeyPressTime = currentTime;
+
+            // Check if the number of keypresses within the time window is too high
+            if (keyPressCount > maxKeyPresses) {
+                alertBox.textContent = "Warning: Unusual keypress behavior detected. Possible keylogger activity!";
+            } else {
+                alertBox.textContent = "";  // Clear the alert when activity is normal
+            }
+
+            // Display some information about the keypress events
+            output.textContent = `Keypress count: ${keyPressCount} (Time difference: ${timeDifference}ms)`;
+        }
+
+        // Listen for keypress events on the input field
+        inputField.addEventListener("keydown", detectKeylogger);
+
+    </script>
+</body>
+</html>
